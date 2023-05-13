@@ -107,7 +107,7 @@ int main()
             string a = curr.params[0], b = curr.params[1], store = curr.params[2];
 
             if (vectorTable[a].size() != vectorTable[b].size()) {
-                cout << "GRESKA: sabiranje vektora koji nisu iste velicine\n";
+                throw runtime_error("GRESKA: sabiranje vektora koji nisu iste velicine\n");
                 continue;
             }
 
@@ -122,7 +122,7 @@ int main()
             int k = vectorTable[curr.params[1]][0];
 
             if(vectorTable[a].size() != vectorTable[store].size()) {
-                cout << "GRESKA: vektor A i vektor za rezultat nisu iste velicine\n";
+                throw runtime_error("GRESKA: vektor A i vektor za rezultat nisu iste velicine\n");
                 continue;
             } 
             
@@ -137,7 +137,7 @@ int main()
             int k = vectorTable[curr.params[1]][0];
 
             if(vectorTable[a].size() != vectorTable[store].size()){
-                cout << "GRESKA: vektor A i vektor za rezultat nisu iste velicine\n";
+                throw runtime_error("GRESKA: vektor A i vektor za rezultat nisu iste velicine\n");
                 continue;
             }
 
@@ -161,18 +161,18 @@ int main()
             string a = curr.params[0], b = curr.params[1], store = curr.params[2];
 
             if (vectorTable[a].size() != vectorTable[b].size()) {
-                cout << "GRESKA: logicko i nad vektorima koji nisu iste velicine\n";
+                throw runtime_error("GRESKA: logicko i nad vektorima koji nisu iste velicine\n");
                 continue;
             }
 
             #pragma omp parallel for
             for(int i = 0; i < (int)vectorTable[a].size(); i++){
                 if(vectorTable[a][i] != 0 && vectorTable[a][i] != 1){
-                    cout << "GRESKA: prvi vektor nije bool vektor\n";
+                    throw runtime_error("GRESKA: prvi vektor nije bool vektor\n");
                     break;
                 }
                 if(vectorTable[b][i] != 0 && vectorTable[b][i] != 1){
-                    cout << "GRESKA: drugi vektor nije bool vektor\n";
+                    throw runtime_error("GRESKA: drugi vektor nije bool vektor\n");
                     break;
                 }
 
@@ -184,21 +184,17 @@ int main()
             string a = curr.params[0], b = curr.params[1], store = curr.params[2];
 
             if (vectorTable[a].size() != vectorTable[b].size()) {
-                cout << "GRESKA: logicko ili nad vektorima koji nisu iste velicine\n";
+                throw runtime_error("GRESKA: logicko ili nad vektorima koji nisu iste velicine\n");
                 continue;
             }
 
             #pragma omp parallel for
             for (int i = 0; i < (int)vectorTable[a].size(); i++) {
                 if(vectorTable[a][i] != 0 && vectorTable[a][i] != 1){
-                    throw runtime_error("GRESKA: prvi vektor nije bool vektor\n");
-                    //cout << "GRESKA: prvi vektor nije bool vektor\n";
-                    //break;
+                    throw runtime_error("GRESKA: prvi vektor nije bool vektor\n");                    
                 }
                 if(vectorTable[b][i] != 0 && vectorTable[b][i] != 1){
                     throw runtime_error("GRESKA: prvi vektor nije bool vektor\n");
-                    //cout << "GRESKA: drugi vektor nije bool vektor\n";
-                    //break;
                 }
 
                 vectorTable[store][i] = (vectorTable[a][i] | vectorTable[b][i] ? 1 : 0);
@@ -211,8 +207,7 @@ int main()
             #pragma omp parallel for 
             for (int i = 0; i < (int)vectorTable[a].size(); i++) {
                 if (vectorTable[a][i] != 0 && vectorTable[a][i] != 1) {
-                    cout << "GRESKA: vektor nije bool vektor!\n";
-                    break;
+                    throw runtime_error("GRESKA: vektor nije bool vektor!\n");
                 }
 
                 vectorTable[a][i] = !(vectorTable[a][i]);
@@ -228,7 +223,7 @@ int main()
             cout << "\n";
         }
         else {
-            cout << "Nije unesena validna instrukcija\n";
+            throw runtime_error("Nije unesena validna instrukcija\n");
         }
     }
 
