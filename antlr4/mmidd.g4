@@ -1,11 +1,11 @@
 grammar mmidd;
 
 program
-    : program_line* EOF;
+    : func+
+    | program_line+ EOF;
 
 program_line
     : (declare  | expression) ';'
-    | func
     ;
 
 expression
@@ -15,7 +15,7 @@ expression
     | left=expression ('+' | '-') right=expression                      #opIzraz
     | left=expression ('&' | '|' | '^') right=expression               #opIzraz
     | left=expression ('==' | '>' | '<' | '>=' | '<=') right=expression #opIzraz
-    | func_call
+    | func_call                                                         #funkPoziv
     | ID                                                                 #promIzraz
     | INT                                                                #intIzraz;
 
@@ -24,7 +24,7 @@ declare
     ;
 
 func_call
-    : ID '(' (ID ','| INT ',')* (ID | INT)')';
+    : ID '(' ((ID | INT) (',' (ID | INT) )* )? ')';
 
 func
     : 'funk' ID '(' (ID (',' ID)*)? ')' '{' func_line* ret '}';
