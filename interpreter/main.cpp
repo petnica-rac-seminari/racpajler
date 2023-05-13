@@ -5,6 +5,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cstdio>
+#include <omp.h>
 
 using namespace std;
 
@@ -94,14 +95,30 @@ int main()
 
             vector<int> data(strToInt(curr.params[1]));
             for (int i = 3; i < (int)curr.params.size(); i++) {
-                data.push_back(strToInt(curr.params[i]));
+                data[i - 3] = strToInt(curr.params[i]);
             }
 
             vectorTable[var] = data;
+
         }
         else if (curr.name == "add") {
-            // todo
-            continue;
+            string a = curr.params[0], b = curr.params[1], store = curr.params[2];
+            //     levi operand   desni operand  mesto cuvanja
+
+            int n = min(vectorTable[a].size(), vectorTable[b].size());
+            //  duzina manjeg              
+
+            if(vectorTable[store].size() < n) break;
+            // ako je duzina niza za cuvanje manja od oba niza, rezultat nece stati
+
+            #pragma omp parallel for
+            for(int i = 0; i < n; i++){
+                vectorTable[store][i] = vectorTable[a][i] + vectorTable[b][i];
+            }
+
+            for(int i = 0; i < n; i++){
+                cout << vectorTable[store][i] << " ";
+            }
         }
         else if (curr.name == "mul") {
             // todo 
