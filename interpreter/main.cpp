@@ -121,8 +121,20 @@ int main()
             }
         }
         else if (curr.name == "mul") {
-            // todo 
-            continue;
+            string a = curr.params[0], store = curr.params[2];
+            int k = strToInt(curr.params[1]);
+
+            if(vectorTable[a].size() != vectorTable[store].size()) break;
+            
+            #pragma omp parallel for
+            for(int i = 0; i < vectorTable[a].size(); i++){
+                vectorTable[store][i] = vectorTable[a][i] * k;
+            }
+
+
+            for(int i = 0; i < vectorTable[store].size(); i++){
+                cout << vectorTable[store][i] << " ";
+            }
         }
         else if (curr.name == "gr") {
             // todo
