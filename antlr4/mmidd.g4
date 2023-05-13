@@ -1,23 +1,47 @@
 grammar mmidd;
 
-
 program
     : program_line* EOF;
 
 program_line
-    : (decl | expression)+ ';';
-
+    : (declare  | expression) ';'
+    | func
+    ;
 
 expression
-    : left=expression '*' right=expression  #opIzraz
-    | left=expression '+' right=expression  #opIzraz
-    | ID                                    #promIzraz
-    | INT                                   #intIzraz;
+    : '(' expression ')'                                                 #zagradeIzraz
+    | '!' expression                                                     #opIzraz
+    | left=expression ('*' | '/') right=expression                      #opIzraz
+    | left=expression ('+' | '-') right=expression                      #opIzraz
+    | left=expression ('&' | '|' | '^') right=expression               #opIzraz
+    | left=expression ('==' | '>' | '<' | '>=' | '<=') right=expression #opIzraz
+    | func_call
+    | ID                                                                 #promIzraz
+    | INT                                                                #intIzraz;
 
-decl
-    : ID '=' INT;
+declare
+    : ID '=' expression 
+    ;
+
+func_call
+    : ID '(' (ID ','| INT ',')* (ID | INT)')';
+
+func
+    : 'funk' ID '(' (ID (',' ID)*)? ')' '{' func_line* ret '}';
+
+func_line
+    : (declare | expression) ';';
+
+ret
+    : 'ret' expression ';';
 
 /* TOKENI */
+
+CLAN_VEKTORA
+    : INT ',';
+
+VEKTOR
+    : '[' CLAN_VEKTORA* INT']';
 
 INT
     : '0' | '-'?[1-9][0-9]*;
