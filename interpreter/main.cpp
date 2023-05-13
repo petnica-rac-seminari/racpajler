@@ -8,16 +8,6 @@
 
 using namespace std;
 
-class Vector {
-    public:
-        int len;    // duzina vektora
-        vector<int> data;
-
-        Vector(int _len) {
-            len = _len;
-            data = {};
-        }
-};
 
 class Instruction {
 
@@ -90,47 +80,64 @@ int main()
 {
 
     vector<Instruction> instructions = load();
-    map<string, Vector> mp;
+    map<string, vector<int>> vectorTable;
 
     for (Instruction &curr : instructions) {
         if (curr.name == "init") {
+            /* inicijalizuje vektor */
+            // params[0] - ime vektora
+            // params[1] - duzina vektora
+            // params[2] - ':'
+            // params[3...n] - elementi vektora
 
+            string var = curr.params[0];
+
+            vector<int> data(strToInt(curr.params[1]));
+            for (int i = 3; i < (int)curr.params.size(); i++) {
+                data.push_back(strToInt(curr.params[i]));
+            }
+
+            vectorTable[var] = data;
         }
         else if (curr.name == "add") {
-
+            // todo
+            continue;
         }
         else if (curr.name == "mul") {
-
+            // todo 
+            continue;
         }
         else if (curr.name == "gr") {
-
+            // todo
+            continue;
         }
         else if (curr.name == "gre") {
-
+            // todo
+            continue;
         }
         else if (curr.name == "ls") {
-
+            continue;
         }
         else if (curr.name == "lse") {
-
+            continue;
         }
         else if (curr.name == "eq") {
-
+            continue;
         }
         else if (curr.name == "and") {
-
+            continue;
         }
         else if (curr.name == "or") {
-
+            continue;
         }
         else if (curr.name == "xor") {
-
+            continue;
         }
         else if (curr.name == "not") {
-
+            continue;
         }
         else if (curr.name == "print") {
-
+            continue;
         }
         else {
             cout << "Nije unesena validna instrukcija\n";
