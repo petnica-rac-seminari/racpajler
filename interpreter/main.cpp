@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <cstdio>
 #include <omp.h>
+#include <exception>
+#include <stdexcept>
 
 using namespace std;
 
@@ -130,6 +132,7 @@ int main()
             }
         }
         else if (curr.name == "gr") {
+            /* veće od */
             string a = curr.params[0], store = curr.params[2];
             int k = vectorTable[curr.params[1]][0];
 
@@ -144,6 +147,7 @@ int main()
             }
         }
         else if (curr.name == "eq") {
+            /*jednakost*/
             string a = curr.params[0], store = curr.params[2];
             int k = vectorTable[curr.params[1]][0];
 
@@ -153,6 +157,7 @@ int main()
             }
         }
         else if (curr.name == "and") {
+            /* and nad bool vektorima */
             string a = curr.params[0], b = curr.params[1], store = curr.params[2];
 
             if (vectorTable[a].size() != vectorTable[b].size()) {
@@ -175,6 +180,7 @@ int main()
             }
         }
         else if (curr.name == "or") {
+            /* logicko ili nad bool vektorima */
             string a = curr.params[0], b = curr.params[1], store = curr.params[2];
 
             if (vectorTable[a].size() != vectorTable[b].size()) {
@@ -185,18 +191,21 @@ int main()
             #pragma omp parallel for
             for (int i = 0; i < (int)vectorTable[a].size(); i++) {
                 if(vectorTable[a][i] != 0 && vectorTable[a][i] != 1){
-                    cout << "GRESKA: prvi vektor nije bool vektor\n";
-                    break;
+                    throw runtime_error("GRESKA: prvi vektor nije bool vektor\n");
+                    //cout << "GRESKA: prvi vektor nije bool vektor\n";
+                    //break;
                 }
                 if(vectorTable[b][i] != 0 && vectorTable[b][i] != 1){
-                    cout << "GRESKA: drugi vektor nije bool vektor\n";
-                    break;
+                    throw runtime_error("GRESKA: prvi vektor nije bool vektor\n");
+                    //cout << "GRESKA: drugi vektor nije bool vektor\n";
+                    //break;
                 }
 
                 vectorTable[store][i] = (vectorTable[a][i] | vectorTable[b][i] ? 1 : 0);
             }
         }
         else if (curr.name == "not") {
+            /* logicko ili nad bool vektorima */
             string a = curr.params[0], store = curr.params[1];
 
             #pragma omp parallel for 
