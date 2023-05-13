@@ -100,6 +100,7 @@ int main()
 
             vectorTable[var] = data;
 
+            continue;
         }
         else if (curr.name == "add") {
             /* sabira dva vektora */
@@ -114,6 +115,8 @@ int main()
             for(int i = 0; i < (int)vectorTable[a].size(); i++){
                 vectorTable[store][i] = vectorTable[a][i] + vectorTable[b][i];
             }
+
+            continue;
         }
         else if (curr.name == "mul") {
             /* mnozi vektor skalarom */
@@ -129,9 +132,23 @@ int main()
             for(int i = 0; i < vectorTable[a].size(); i++){
                 vectorTable[store][i] = vectorTable[a][i] * k;
             }
+
+            continue;
         }
         else if (curr.name == "gr") {
-            // todo
+            string a = curr.params[0], store = curr.params[2];
+            int k = vectorTable[curr.params[1]][0];
+
+            if(vectorTable[a].size() != vectorTable[store].size()){
+                cout << "GRESKA: vektor A i vektor za rezultat nisu iste velicine";
+                continue;
+            }
+
+            #pragma parallel for
+            for(int i = 0; i < vectorTable[a].size(); i++){
+                vectorTable[store][i] = (vectorTable[a][i] > k ? 1 : 0);
+            }
+
             continue;
         }
         else if (curr.name == "eq") {
