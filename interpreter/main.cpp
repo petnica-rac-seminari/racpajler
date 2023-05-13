@@ -8,6 +8,17 @@
 
 using namespace std;
 
+class Vector {
+    public:
+        int len;    // duzina vektora
+        vector<int> data;
+
+        Vector(int _len) {
+            len = _len;
+            data = {};
+        }
+};
+
 class Instruction {
 
     public:
@@ -48,7 +59,6 @@ vector<Instruction> load()
     string line = "";
     while(getline(in, line)) {
 
-        // preskacemo praznu liniju
         if (line == "") continue;
 
         // razbijamo liniju u tokene
@@ -78,42 +88,52 @@ vector<Instruction> load()
 
 int main()
 {
+
     vector<Instruction> instructions = load();
-    
-    // hes tabela za promenljive
-    map<string, int> variables;            
+    map<string, Vector> mp;
 
-    for (Instruction &in : instructions) {
-        if (in.name == "dodeli") {
-            string var = in.params[0]; 
-            int val = strToInt(in.params[1]);
+    for (Instruction &curr : instructions) {
+        if (curr.name == "init") {
 
-            variables[var] = val;
-            cout << "Napravljena promenljiva " << var << " = " << val << "\n";
         }
-        else if (in.name == "saberi") {
-            string var1 = in.params[0];
-            string var2 = in.params[1];
+        else if (curr.name == "add") {
 
-            int res = variables[var1] + variables[var2];
-            cout << "Rezultat sabiranja: " << res << "\n";
         }
-        else if (in.name == "pomnozi") {
-            string var1 = in.params[0];
-            string var2 = in.params[1];
+        else if (curr.name == "mul") {
 
-            int res = variables[var1] * variables[var2];
-            cout << "Rezultat mnozenja: " << res << "\n";
         }
-        else if (in.name == "podeli") {
-            string var1 = in.params[0];
-            string var2 = in.params[1];
+        else if (curr.name == "gr") {
 
-            int res = variables[var1] / variables[var2];
-            cout << "Rezultat deljenje: " << res << "\n";
+        }
+        else if (curr.name == "gre") {
+
+        }
+        else if (curr.name == "ls") {
+
+        }
+        else if (curr.name == "lse") {
+
+        }
+        else if (curr.name == "eq") {
+
+        }
+        else if (curr.name == "and") {
+
+        }
+        else if (curr.name == "or") {
+
+        }
+        else if (curr.name == "xor") {
+
+        }
+        else if (curr.name == "not") {
+
+        }
+        else if (curr.name == "print") {
+
         }
         else {
-            cout << "Pogresna instrukcija u medjukodu\n";
+            cout << "Nije unesena validna instrukcija\n";
         }
     }
 
