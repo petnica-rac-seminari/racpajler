@@ -4,30 +4,30 @@ program
     : program_line* EOF;
 
 program_line
-    : (declare | expression | func | func_call) ';';
+    : (declare  | expression) ';'
+    | func
+    ;
 
 expression
     : '(' expression ')'                                                 #zagradeIzraz
     | '!' expression                                                     #opIzraz
-    | left=expression ('*' | '/')+ right=expression                      #opIzraz
-    | left=expression ('+' | '-')+ right=expression                      #opIzraz
-    | left=expression  ('&' | '|' | '^')+ right=expression               #opIzraz
-    | left=expression ('==' | '>' | '<' | '>=' | '<=')+ right=expression #opIzraz
+    | left=expression ('*' | '/') right=expression                      #opIzraz
+    | left=expression ('+' | '-') right=expression                      #opIzraz
+    | left=expression ('&' | '|' | '^') right=expression               #opIzraz
+    | left=expression ('==' | '>' | '<' | '>=' | '<=') right=expression #opIzraz
+    | func_call
     | ID                                                                 #promIzraz
     | INT                                                                #intIzraz;
 
 declare
-    : ID '=' INT
-    | ID '=' VEKTOR
+    : ID '=' expression 
     ;
 
 func_call
-    : ID '(' (ID ','| INT ',')+ (ID | INT)')';
+    : ID '(' (ID ','| INT ',')* (ID | INT)')';
 
 func
-    : 'funk' ID '(' (ID ',')* ID ')' '{'
-    | func_line*
-    | ret '}';
+    : 'funk' ID '(' (ID (',' ID)*)? ')' '{' func_line* ret '}';
 
 func_line
     : (declare | expression) ';';
