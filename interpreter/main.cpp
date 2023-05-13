@@ -102,52 +102,36 @@ int main()
 
         }
         else if (curr.name == "add") {
+            /* sabira dva vektora */
             string a = curr.params[0], b = curr.params[1], store = curr.params[2];
-            //     levi operand   desni operand  mesto cuvanja
 
-            int n = min(vectorTable[a].size(), vectorTable[b].size());
-            //  duzina manjeg              
-
-            if(vectorTable[store].size() < n) break;
-            // ako je duzina niza za cuvanje manja od oba niza, rezultat nece stati
-
-            #pragma omp parallel for
-            for(int i = 0; i < n; i++){
-                vectorTable[store][i] = vectorTable[a][i] + vectorTable[b][i];
+            if (vectorTable[a].size() != vectorTable[b].size()) {
+                cout << "GRESKA: sabiranje vektora koji nisu iste velicine";
+                continue;
             }
 
-            for(int i = 0; i < n; i++){
-                cout << vectorTable[store][i] << " ";
+            #pragma omp parallel for
+            for(int i = 0; i < (int)vectorTable[a].size(); i++){
+                vectorTable[store][i] = vectorTable[a][i] + vectorTable[b][i];
             }
         }
         else if (curr.name == "mul") {
+            /* mnozi vektor skalarom */
             string a = curr.params[0], store = curr.params[2];
-            int k = strToInt(curr.params[1]);
+            int k = vectorTable[curr.params[1]][0];
 
-            if(vectorTable[a].size() != vectorTable[store].size()) break;
+            if(vectorTable[a].size() != vectorTable[store].size()) {
+                cout << "GRESKA: vektor A i vektor za rezultat nisu iste velicine";
+                continue;
+            } 
             
             #pragma omp parallel for
             for(int i = 0; i < vectorTable[a].size(); i++){
                 vectorTable[store][i] = vectorTable[a][i] * k;
             }
-
-
-            for(int i = 0; i < vectorTable[store].size(); i++){
-                cout << vectorTable[store][i] << " ";
-            }
         }
         else if (curr.name == "gr") {
             // todo
-            continue;
-        }
-        else if (curr.name == "gre") {
-            // todo
-            continue;
-        }
-        else if (curr.name == "ls") {
-            continue;
-        }
-        else if (curr.name == "lse") {
             continue;
         }
         else if (curr.name == "eq") {
@@ -157,9 +141,6 @@ int main()
             continue;
         }
         else if (curr.name == "or") {
-            continue;
-        }
-        else if (curr.name == "xor") {
             continue;
         }
         else if (curr.name == "not") {
