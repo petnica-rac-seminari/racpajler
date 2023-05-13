@@ -152,9 +152,38 @@ int main()
             continue;
         }
         else if (curr.name == "eq") {
+            string a = curr.params[0], store = curr.params[2];
+            int k = vectorTable[curr.params[1]][0];
+
+            #pragma omp parallel for
+            for(int i = 0; i < (int)vectorTable[a].size(); i++){
+                vectorTable[store][i] = (vectorTable[a][i] == k ? 1 : 0);
+            }
+
             continue;
         }
         else if (curr.name == "and") {
+            string a = curr.params[0], b = curr.params[1], store = curr.params[2];
+
+            if (vectorTable[a].size() != vectorTable[b].size()) {
+                cout << "GRESKA: uporedjivanje vektora koji nisu iste velicine";
+                continue;
+            }
+
+            #pragma omp parallel for
+            for(int i = 0; i < (int)vectorTable[a].size(); i++){
+                if(vectorTable[a][i] != 0 && vectorTable[a][i] != 1){
+                    cout << "GRESKA: prvi vektor nije bool vektor";
+                    continue;
+                }
+                if(vectorTable[b][i] != 0 && vectorTable[b][i] != 1){
+                    cout << "GRESKA: drugi vektor nije bool vektor";
+                    continue;
+                }
+
+                vectorTable[store][i] = (vectorTable[a][i] & vectorTable[b][i] ? 1 : 0);
+            }
+
             continue;
         }
         else if (curr.name == "or") {
@@ -164,6 +193,14 @@ int main()
             continue;
         }
         else if (curr.name == "print") {
+            /* ispisuje vektor */
+            string var = curr.params[0];
+
+            for (auto x : vectorTable[var]) {
+                cout << x << " ";
+            }
+            cout << "\n";
+
             continue;
         }
         else {
