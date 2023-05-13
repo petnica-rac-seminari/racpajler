@@ -99,15 +99,13 @@ int main()
             }
 
             vectorTable[var] = data;
-
-            continue;
         }
         else if (curr.name == "add") {
             /* sabira dva vektora */
             string a = curr.params[0], b = curr.params[1], store = curr.params[2];
 
             if (vectorTable[a].size() != vectorTable[b].size()) {
-                cout << "GRESKA: sabiranje vektora koji nisu iste velicine";
+                cout << "GRESKA: sabiranje vektora koji nisu iste velicine\n";
                 continue;
             }
 
@@ -115,8 +113,6 @@ int main()
             for(int i = 0; i < (int)vectorTable[a].size(); i++){
                 vectorTable[store][i] = vectorTable[a][i] + vectorTable[b][i];
             }
-
-            continue;
         }
         else if (curr.name == "mul") {
             /* mnozi vektor skalarom */
@@ -124,7 +120,7 @@ int main()
             int k = vectorTable[curr.params[1]][0];
 
             if(vectorTable[a].size() != vectorTable[store].size()) {
-                cout << "GRESKA: vektor A i vektor za rezultat nisu iste velicine";
+                cout << "GRESKA: vektor A i vektor za rezultat nisu iste velicine\n";
                 continue;
             } 
             
@@ -132,15 +128,13 @@ int main()
             for(int i = 0; i < vectorTable[a].size(); i++){
                 vectorTable[store][i] = vectorTable[a][i] * k;
             }
-
-            continue;
         }
         else if (curr.name == "gr") {
             string a = curr.params[0], store = curr.params[2];
             int k = vectorTable[curr.params[1]][0];
 
             if(vectorTable[a].size() != vectorTable[store].size()){
-                cout << "GRESKA: vektor A i vektor za rezultat nisu iste velicine";
+                cout << "GRESKA: vektor A i vektor za rezultat nisu iste velicine\n";
                 continue;
             }
 
@@ -148,8 +142,6 @@ int main()
             for(int i = 0; i < vectorTable[a].size(); i++){
                 vectorTable[store][i] = (vectorTable[a][i] > k ? 1 : 0);
             }
-
-            continue;
         }
         else if (curr.name == "eq") {
             string a = curr.params[0], store = curr.params[2];
@@ -159,38 +151,63 @@ int main()
             for(int i = 0; i < (int)vectorTable[a].size(); i++){
                 vectorTable[store][i] = (vectorTable[a][i] == k ? 1 : 0);
             }
-
-            continue;
         }
         else if (curr.name == "and") {
             string a = curr.params[0], b = curr.params[1], store = curr.params[2];
 
             if (vectorTable[a].size() != vectorTable[b].size()) {
-                cout << "GRESKA: uporedjivanje vektora koji nisu iste velicine";
+                cout << "GRESKA: logicko i nad vektorima koji nisu iste velicine\n";
                 continue;
             }
 
             #pragma omp parallel for
             for(int i = 0; i < (int)vectorTable[a].size(); i++){
                 if(vectorTable[a][i] != 0 && vectorTable[a][i] != 1){
-                    cout << "GRESKA: prvi vektor nije bool vektor";
-                    continue;
+                    cout << "GRESKA: prvi vektor nije bool vektor\n";
+                    break;
                 }
                 if(vectorTable[b][i] != 0 && vectorTable[b][i] != 1){
-                    cout << "GRESKA: drugi vektor nije bool vektor";
-                    continue;
+                    cout << "GRESKA: drugi vektor nije bool vektor\n";
+                    break;
                 }
 
                 vectorTable[store][i] = (vectorTable[a][i] & vectorTable[b][i] ? 1 : 0);
             }
-
-            continue;
         }
         else if (curr.name == "or") {
-            continue;
+            string a = curr.params[0], b = curr.params[1], store = curr.params[2];
+
+            if (vectorTable[a].size() != vectorTable[b].size()) {
+                cout << "GRESKA: logicko ili nad vektorima koji nisu iste velicine\n";
+                continue;
+            }
+
+            #pragma omp parallel for
+            for (int i = 0; i < (int)vectorTable[a].size(); i++) {
+                if(vectorTable[a][i] != 0 && vectorTable[a][i] != 1){
+                    cout << "GRESKA: prvi vektor nije bool vektor\n";
+                    break;
+                }
+                if(vectorTable[b][i] != 0 && vectorTable[b][i] != 1){
+                    cout << "GRESKA: drugi vektor nije bool vektor\n";
+                    break;
+                }
+
+                vectorTable[store][i] = (vectorTable[a][i] | vectorTable[b][i] ? 1 : 0);
+            }
         }
         else if (curr.name == "not") {
-            continue;
+            string a = curr.params[0], store = curr.params[1];
+
+            #pragma omp parallel for 
+            for (int i = 0; i < (int)vectorTable[a].size(); i++) {
+                if (vectorTable[a][i] != 0 && vectorTable[a][i] != 1) {
+                    cout << "GRESKA: vektor nije bool vektor!\n";
+                    break;
+                }
+
+                vectorTable[a][i] = !(vectorTable[a][i]);
+            }
         }
         else if (curr.name == "print") {
             /* ispisuje vektor */
@@ -200,8 +217,6 @@ int main()
                 cout << x << " ";
             }
             cout << "\n";
-
-            continue;
         }
         else {
             cout << "Nije unesena validna instrukcija\n";
