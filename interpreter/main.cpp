@@ -1,4 +1,11 @@
-#include <bits/stdc++.h>
+#include <vector>
+#include <string>
+#include <map>
+#include <fstream>
+#include <iostream>
+#include <algorithm>
+#include <cstdio>
+
 using namespace std;
 
 class Instruction {
