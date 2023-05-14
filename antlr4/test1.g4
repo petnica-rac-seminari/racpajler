@@ -1,4 +1,4 @@
-grammar mmidd;
+grammar test1;
 
 program
     : func+
@@ -10,17 +10,17 @@ program_line
 
 expression
     : '(' expression ')'                                                 #zagradeIzraz
-    | '!' expression                                                     #opIzraz
-    | left=expression ('*' | '/') right=expression                      #opIzraz
-    | left=expression ('+' | '-') right=expression                      #opIzraz
-    | left=expression ('&' | '|' | '^') right=expression               #opIzraz
-    | left=expression ('==' | '>' | '<' | '>=' | '<=') right=expression #opIzraz
+    | op='!' expression                                                     #opIzraz
+    | left=expression op=('*' | '/') right=expression                      #opIzraz
+    | left=expression op=('+' | '-') right=expression                      #opIzraz
+    | left=expression op=('&' | '|' | '^') right=expression               #opIzraz
+    | left=expression op=('==' | '>' | '<' | '>=' | '<=') right=expression #opIzraz
     | func_call                                                         #funkPoziv
     | ID                                                                 #promIzraz
     | INT                                                                #intIzraz;
 
 declare
-    : ID '=' expression 
+    : left=ID op='=' right=expression 
     ;
 
 func_call
