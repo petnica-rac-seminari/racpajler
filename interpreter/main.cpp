@@ -79,6 +79,15 @@ vector<Instruction> load()
     return ins;
 }
 
+bool startswith(string a, string b){
+    if(b.length() > a.length()) return false;
+
+    for(int i = 0; i < b.length(); i++){
+        if(a[i] != b[i]) return false;
+    }
+    return true;
+}
+
 int main()
 {
 
@@ -88,7 +97,8 @@ int main()
     int lineCount = 1;
 
     for (Instruction &curr : instructions) {
-        if (curr.name == "init") {
+        if(startswith(curr.name, "#")) continue;
+        else if (curr.name == "init") {
             /* inicijalizuje vektor */
             // params[0] - ime vektora
             // params[1] - ':'
@@ -247,7 +257,8 @@ int main()
             #pragma omp parallel
             vectorTable[store] = res;
         }
-        else if(curr.name == "mv"){
+        else if(curr.name == "ld"){
+            string a = curr.params[0], b = curr.params[1];
 
         }
         else {
