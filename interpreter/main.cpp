@@ -260,6 +260,15 @@ int main()
         else if(curr.name == "ld"){
             string a = curr.params[0], b = curr.params[1];
 
+            if(a.length() == b.length()){
+                #pragma omp parallel for
+                for(int i = 0; i < vectorTable[b].size(); i++){
+                    vectorTable[a][i] = vectorTable[b][i]; 
+                }
+            }            
+            else{
+                vectorTable[a] = vectorTable[b];
+            }
         }
         else {
             throw runtime_error("GRESKA: Nije unesena validna instrukcija " + to_string(lineCount));
