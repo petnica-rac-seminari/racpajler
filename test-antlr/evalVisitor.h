@@ -10,12 +10,15 @@
  * This class provides an empty implementation of test1Visitor, which can be
  * extended to create a visitor which only needs to handle a subset of the available methods.
  */
+
+/// POTREBAN c++20 zbog unordered_list.contains()
+
 class evalVisitor : public test1BaseVisitor
 {
 public:
   std::vector<int> evalStack;
   std::vector<std::string> promStack;
-  std::unordered_map<std::string, int> promeljiveMap;
+  std::unordered_map<std::string, int> promenljiveMap;
 
   virtual std::any visitProgram(test1Parser::ProgramContext *ctx) override
   {
@@ -36,6 +39,8 @@ public:
   {
     std::string promenljiva = ctx->getText();
     promStack.push_back(promenljiva);
+    if (promenljiveMap.contains(promenljiva))
+      evalStack.push_back(promenljiveMap.at(promenljiva));
     return visitChildren(ctx);
   }
 
@@ -89,7 +94,7 @@ public:
     evalStack.pop_back();
     std::string lhs = ctx->left->getText();
 
-    promeljiveMap.insert({lhs, rhs});
+    promenljiveMap.insert({lhs, rhs});
     std::cout << lhs + " vrednost je: " + std::to_string(rhs) << std::endl;
     return rhs;
   }
