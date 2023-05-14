@@ -79,25 +79,36 @@ vector<Instruction> load()
     return ins;
 }
 
+bool startswith(string a, string b){
+    if(b.length() > a.length()) return false;
+
+    for(int i = 0; i < b.length(); i++){
+        if(a[i] != b[i]) return false;
+    }
+    return true;
+}
+
 int main()
 {
 
     vector<Instruction> instructions = load();
     map<string, vector<int>> vectorTable;
 
+    int lineCount = 1;
+
     for (Instruction &curr : instructions) {
-        if (curr.name == "init") {
+        if(startswith(curr.name, "#")) continue;
+        else if (curr.name == "init") {
             /* inicijalizuje vektor */
             // params[0] - ime vektora
-            // params[1] - duzina vektora
-            // params[2] - ':'
-            // params[3...n] - elementi vektora
+            // params[1] - ':'
+            // params[2...n] - elementi vektora
 
             string var = curr.params[0];
 
-            vector<int> data(strToInt(curr.params[1]));
-            for (int i = 3; i < (int)curr.params.size(); i++) {
-                data[i - 3] = strToInt(curr.params[i]);
+            vector<int> data;
+            for (int i = 2; i < (int)curr.params.size(); i++) {
+                data.push_back(strToInt(curr.params[i]));
             }
 
             vectorTable[var] = data;
@@ -107,7 +118,7 @@ int main()
             string a = curr.params[0], b = curr.params[1], store = curr.params[2];
 
             if (vectorTable[a].size() != vectorTable[b].size()) {
-                throw runtime_error("GRESKA: sabiranje vektora koji nisu iste velicine\n");
+                throw runtime_error("GRESKA: sabiranje vektora koji nisu iste velicine " + to_string(lineCount));
                 continue;
             }
 
@@ -122,7 +133,7 @@ int main()
             int k = vectorTable[curr.params[1]][0];
 
             if(vectorTable[a].size() != vectorTable[store].size()) {
-                throw runtime_error("GRESKA: vektor A i vektor za rezultat nisu iste velicine\n");
+                throw runtime_error("GRESKA: vektor A i vektor za rezultat nisu iste velicine " + to_string(lineCount));
                 continue;
             } 
             
@@ -137,7 +148,7 @@ int main()
             int k = vectorTable[curr.params[1]][0];
 
             if(vectorTable[a].size() != vectorTable[store].size()){
-                throw runtime_error("GRESKA: vektor A i vektor za rezultat nisu iste velicine\n");
+                throw runtime_error("GRESKA: vektor A i vektor za rezultat nisu iste velicine " + to_string(lineCount));
                 continue;
             }
 
@@ -161,18 +172,18 @@ int main()
             string a = curr.params[0], b = curr.params[1], store = curr.params[2];
 
             if (vectorTable[a].size() != vectorTable[b].size()) {
-                throw runtime_error("GRESKA: logicko i nad vektorima koji nisu iste velicine\n");
+                throw runtime_error("GRESKA: logicko i nad vektorima koji nisu iste velicine " + to_string(lineCount));
                 continue;
             }
 
             #pragma omp parallel for
             for(int i = 0; i < (int)vectorTable[a].size(); i++){
                 if(vectorTable[a][i] != 0 && vectorTable[a][i] != 1){
-                    throw runtime_error("GRESKA: prvi vektor nije bool vektor\n");
+                    throw runtime_error("GRESKA: prvi vektor nije bool vektor " + to_string(lineCount));
                     break;
                 }
                 if(vectorTable[b][i] != 0 && vectorTable[b][i] != 1){
-                    throw runtime_error("GRESKA: drugi vektor nije bool vektor\n");
+                    throw runtime_error("GRESKA: drugi vektor nije bool vektor " + to_string(lineCount));
                     break;
                 }
 
@@ -184,17 +195,17 @@ int main()
             string a = curr.params[0], b = curr.params[1], store = curr.params[2];
 
             if (vectorTable[a].size() != vectorTable[b].size()) {
-                throw runtime_error("GRESKA: logicko ili nad vektorima koji nisu iste velicine\n");
+                throw runtime_error("GRESKA: logicko ili nad vektorima koji nisu iste velicine " + to_string(lineCount));
                 continue;
             }
 
             #pragma omp parallel for
             for (int i = 0; i < (int)vectorTable[a].size(); i++) {
                 if(vectorTable[a][i] != 0 && vectorTable[a][i] != 1){
-                    throw runtime_error("GRESKA: prvi vektor nije bool vektor\n");                    
+                    throw runtime_error("GRESKA: prvi vektor nije bool vektor " + to_string(lineCount));                     
                 }
                 if(vectorTable[b][i] != 0 && vectorTable[b][i] != 1){
-                    throw runtime_error("GRESKA: prvi vektor nije bool vektor\n");
+                    throw runtime_error("GRESKA: prvi vektor nije bool vektor " + to_string(lineCount));
                 }
 
                 vectorTable[store][i] = (vectorTable[a][i] | vectorTable[b][i] ? 1 : 0);
@@ -207,7 +218,8 @@ int main()
             #pragma omp parallel for 
             for (int i = 0; i < (int)vectorTable[a].size(); i++) {
                 if (vectorTable[a][i] != 0 && vectorTable[a][i] != 1) {
-                    throw runtime_error("GRESKA: vektor nije bool vektor!\n");
+                    throw runtime_error("GRESKA: vektor nije bool vektor! " + to_string(lineCount));
+                    continue;
                 }
 
                 vectorTable[a][i] = !(vectorTable[a][i]);
@@ -222,9 +234,37 @@ int main()
             }
             cout << "\n";
         }
-        else {
-            throw runtime_error("Nije unesena validna instrukcija\n");
+        else if(curr.name == "del"){
+            string a = curr.params[0], b = curr.params[1], store = curr.params[2];
+            
+            if(vectorTable[a].size() != vectorTable[b].size()){
+                throw runtime_error("GRESKA: Vektori nisu iste velicine " + to_string(lineCount));
+                continue;
+            }
+            #pragma omp parallel for
+            for(int i = 0; i < vectorTable[b].size(); i++){
+                if(vectorTable[b][i] != 0 && vectorTable[b][i] != 1){
+                    throw runtime_error("GRESKA: drugi vektor nije bool " + to_string(lineCount));
+                    continue;
+                }
+            }
+
+            vector<int> res;
+            for(int i = 0; i < vectorTable[a].size(); i++){
+                if(vectorTable[b][i] == 1) res.push_back(vectorTable[a][i]);
+            }
+
+            #pragma omp parallel
+            vectorTable[store] = res;
         }
+        else if(curr.name == "ld"){
+            string a = curr.params[0], b = curr.params[1];
+
+        }
+        else {
+            throw runtime_error("GRESKA: Nije unesena validna instrukcija " + to_string(lineCount));
+        }
+        lineCount++;
     }
 
     return 0;
