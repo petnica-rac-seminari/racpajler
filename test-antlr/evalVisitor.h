@@ -11,14 +11,14 @@
  * extended to create a visitor which only needs to handle a subset of the available methods.
  */
 
-/// POTREBAN c++20 zbog unordered_list.contains()
-
 class evalVisitor : public test1BaseVisitor
 {
 public:
-  std::vector<int> evalStack;
   std::vector<std::string> promStack;
-  std::unordered_map<std::string, int> promenljiveMap;
+  // std::unordered_map<std::string, int> promenljiveMap;
+  std::vector<std::string> medjuKod;
+  std::vector<std::string> linijaStack;
+  int tempCounter = 0;
 
   virtual std::any visitProgram(test1Parser::ProgramContext *ctx) override
   {
@@ -39,15 +39,15 @@ public:
   {
     std::string promenljiva = ctx->getText();
     promStack.push_back(promenljiva);
-    if (promenljiveMap.contains(promenljiva))
-      evalStack.push_back(promenljiveMap.at(promenljiva));
+    // if (promenljiveMap.find(promenljiva) != promenljiveMap.end())
+    // evalStack.push_back(promenljiveMap.at(promenljiva));
     return visitChildren(ctx);
   }
 
   virtual std::any visitIntIzraz(test1Parser::IntIzrazContext *ctx) override
   {
     std::string broj = ctx->getText();
-    evalStack.push_back(std::stoi(broj));
+    promStack.push_back(broj);
     return visitChildren(ctx);
   }
 
@@ -58,45 +58,62 @@ public:
 
   virtual std::any visitOpIzraz(test1Parser::OpIzrazContext *ctx) override
   {
-    this->visit(ctx->left);
-    this->visit(ctx->right);
-    int rhs = evalStack.back();
-    evalStack.pop_back();
-    int lhs = evalStack.back();
-    evalStack.pop_back();
+    std::string privremenaLinija;
     switch (ctx->op->getText()[0])
     {
     case '+':
-      evalStack.push_back(lhs + rhs);
+      privremenaLinija.append("dodaj ");
       break;
     case '*':
-      evalStack.push_back(lhs * rhs);
+      privremenaLinija.append("pomnozi ");
       break;
     case '/':
-      evalStack.push_back(lhs / rhs);
+      privremenaLinija.append("podeli ");
       break;
     case '-':
-      evalStack.push_back(lhs - rhs);
+      privremenaLinija.append("oduzmi ");
       break;
 
     default:
       break;
     }
+    this->visit(ctx->left);
+    this->visit(ctx->right);
+    privremenaLinija.append(promStack.back());
+    privremenaLinija.append(" ");
+    if (promStack.back()[0] == 't')
+      tempCounter--;
+    promStack.pop_back();
+    privremenaLinija.append(promStack.back());
+    privremenaLinija.append(" ");
+    if (promStack.back()[0] == 't')
+      tempCounter--;
+    promStack.pop_back();
 
-    return lhs + rhs; // ovo nista ne radi, samo da ne visituje decu opet
+    promStack.push_back("t" + std::to_string(++tempCounter));
+    privremenaLinija.append(promStack.back());
+    linijaStack.push_back(privremenaLinija);
+
+    // int rhs = evalStack.back();
+    // evalStack.pop_back();
+    // int lhs = evalStack.back();
+    // evalStack.pop_back();
+
+    return 0; // ovo nista ne radi, samo da ne visituje decu opet
     // return visitChildren(ctx);
   }
 
   virtual std::any visitDeclare(test1Parser::DeclareContext *ctx) override
   {
-    this->visit(ctx->right);
-    int rhs = evalStack.back();
-    evalStack.pop_back();
-    std::string lhs = ctx->left->getText();
+    // this->visit(ctx->right);
+    // int rhs = evalStack.back();
+    // evalStack.pop_back();
+    // std::string lhs = ctx->left->getText();
 
-    promenljiveMap.insert({lhs, rhs});
-    std::cout << lhs + " vrednost je: " + std::to_string(rhs) << std::endl;
-    return rhs;
+    // promenljiveMap.insert({lhs, rhs});
+    // std::cout << lhs + " vrednost je: " + std::to_string(rhs) << std::endl;
+    // return rhs;
+    return visitChildren(ctx);
   }
 
   virtual std::any visitFunc_call(test1Parser::Func_callContext *ctx) override

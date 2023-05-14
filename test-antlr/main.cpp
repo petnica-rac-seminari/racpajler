@@ -11,7 +11,7 @@ using namespace antlr4;
 int main(int argc, const char *argv[])
 {
 
-  ANTLRInputStream input("a=5*4;a/2;");
+  ANTLRInputStream input("((1+2)*(3+4))*((5+6)*(7+8));");
   test1Lexer lexer(&input);
   CommonTokenStream tokens(&lexer);
 
@@ -23,8 +23,10 @@ int main(int argc, const char *argv[])
 
   evalVisitor visitor;
   visitor.visit(tree);
-  std::cout << visitor.evalStack.front() << std::endl;
-  std::cout << visitor.evalStack.end() - visitor.evalStack.begin() << std::endl;
+  for (size_t i = 0; i < visitor.linijaStack.end() - visitor.linijaStack.begin(); i++)
+  {
+    std::cout << visitor.linijaStack.at(i) << std::endl;
+  }
 
   return 0;
 }
