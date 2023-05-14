@@ -79,15 +79,6 @@ vector<Instruction> load()
     return ins;
 }
 
-bool startswith(string a, string b){
-    if(b.length() > a.length()) return false;
-
-    for(int i = 0; i < b.length(); i++){
-        if(a[i] != b[i]) return false;
-    }
-    return true;
-}
-
 int main()
 {
 
@@ -97,7 +88,7 @@ int main()
     int lineCount = 1;
 
     for (Instruction &curr : instructions) {
-        if(startswith(curr.name, "#")) continue;
+        if(curr.name[0] = '#') continue;
         else if (curr.name == "init") {
             /* inicijalizuje vektor */
             // params[0] - ime vektora
