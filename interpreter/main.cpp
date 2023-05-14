@@ -121,6 +121,12 @@ int main()
                 }
             }
 
+            // ako store vektor nije definisan, kreiramo ga
+            if (!vectorTable.count(store)) {
+                vectorTable[store] = {};
+                vectorTable[store].resize((int)vectorTable[a].size());
+            }
+
             #pragma omp parallel for
             for(int i = 0; i < (int)vectorTable[a].size(); i++){
                 vectorTable[store][i] = vectorTable[a][i] + 
@@ -135,6 +141,12 @@ int main()
             int k;
             if (vectorTable.count(b) == 0)  k = strToInt(b);
             else k = vectorTable[b][0];
+
+            // ako store vektor nije definisan, kreiramo ga
+            if (!vectorTable.count(store)) {
+                vectorTable[store] = {};
+                vectorTable[store].resize((int)vectorTable[a].size());
+            }
             
             #pragma omp parallel for
             for(int i = 0; i < vectorTable[a].size(); i++){
@@ -143,8 +155,11 @@ int main()
         }
         else if (curr.name == "gr") {
             /* veće od */
-            string a = curr.params[0], store = curr.params[2];
-            int k = vectorTable[curr.params[1]][0];
+            string a = curr.params[0], b = curr.params[1], store = curr.params[2];
+
+            int k;
+            if (!vectorTable.count(b)) k = strToInt(b);
+            else k = vectorTable[b][0];
 
             if(vectorTable[a].size() != vectorTable[store].size()){
                 throw runtime_error("GRESKA: vektor A i vektor za rezultat nisu iste velicine " + to_string(lineCount));
@@ -158,8 +173,11 @@ int main()
         }
         else if (curr.name == "eq") {
             /*jednakost*/
-            string a = curr.params[0], store = curr.params[2];
-            int k = vectorTable[curr.params[1]][0];
+            string a = curr.params[0], b = curr.params[1], store = curr.params[2];
+
+            int k;
+            if (!vectorTable.count(b)) k = strToInt(b);
+            else k = vectorTable[b][0];
 
             #pragma omp parallel for
             for(int i = 0; i < (int)vectorTable[a].size(); i++){
