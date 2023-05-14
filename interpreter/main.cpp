@@ -88,7 +88,7 @@ int main()
     int lineCount = 1;
 
     for (Instruction &curr : instructions) {
-        if(curr.name[0] = '#') continue;
+        if(curr.name[0] == '#') continue;
         else if (curr.name == "init") {
             /* inicijalizuje vektor */
             // params[0] - ime vektora
@@ -108,25 +108,33 @@ int main()
             /* sabira dva vektora */
             string a = curr.params[0], b = curr.params[1], store = curr.params[2];
 
-            if (vectorTable[a].size() != vectorTable[b].size()) {
-                throw runtime_error("GRESKA: sabiranje vektora koji nisu iste velicine " + to_string(lineCount));
-                continue;
+            // proveravamo da li je b promenljiva ili konstanta
+            bool constant = false;
+            int x;
+            if (vectorTable.count(b) == 0) {
+                constant = true;
+                x = strToInt(b);
+            } 
+            else {
+                if (vectorTable[a].size() != vectorTable[b].size()) {
+                    throw runtime_error("GRESKA: sabiranje vektora koji nisu iste velicine " + to_string(lineCount));
+                }
             }
 
             #pragma omp parallel for
             for(int i = 0; i < (int)vectorTable[a].size(); i++){
-                vectorTable[store][i] = vectorTable[a][i] + vectorTable[b][i];
+                vectorTable[store][i] = vectorTable[a][i] + 
+                    (constant ? x : vectorTable[b][i]);
             }
         }
         else if (curr.name == "mul") {
             /* mnozi vektor skalarom */
-            string a = curr.params[0], store = curr.params[2];
-            int k = vectorTable[curr.params[1]][0];
+            string a = curr.params[0], b = curr.params[1], store = curr.params[2];
 
-            if(vectorTable[a].size() != vectorTable[store].size()) {
-                throw runtime_error("GRESKA: vektor A i vektor za rezultat nisu iste velicine " + to_string(lineCount));
-                continue;
-            } 
+            // proveravamo da li je b promenljiva ili konstanta
+            int k;
+            if (vectorTable.count(b) == 0)  k = strToInt(b);
+            else k = vectorTable[b][0];
             
             #pragma omp parallel for
             for(int i = 0; i < vectorTable[a].size(); i++){
@@ -226,6 +234,8 @@ int main()
             cout << "\n";
         }
         else if(curr.name == "del"){
+            /* pravi vektor, koji sadrzi elemente a[i] koji su na indeksima
+            na kojima se u vektoru b nalaze jedinice */
             string a = curr.params[0], b = curr.params[1], store = curr.params[2];
             
             if(vectorTable[a].size() != vectorTable[b].size()){
